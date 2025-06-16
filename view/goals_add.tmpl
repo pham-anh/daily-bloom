@@ -1,0 +1,79 @@
+{{define "goals_add"}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Goal</title>
+    <style>
+        body { background: #fff; color: #000; font-family: sans-serif; margin: 0; padding: 0; }
+        .container { max-width: 400px; margin: 2rem auto; padding: 2rem; border: 1px solid #000; border-radius: 8px; }
+        label { display: block; margin-top: 1rem; }
+        input, textarea, button { width: 100%; margin-top: 0.5rem; padding: 0.5rem; border: 1px solid #000; border-radius: 4px; background: #fff; color: #000; }
+        button { margin-top: 1.5rem; cursor: pointer; }
+        .actions { display: flex; gap: 1rem; }
+        @media (max-width: 600px) {
+            .container { max-width: 95vw; padding: 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Add Goal</h2>
+        <form id="goalForm">
+            <label>Goal Name
+                <input type="text" id="goalName" maxlength="100" required />
+            </label>
+            <label>Goal Description
+                <textarea id="goalDesc" maxlength="255" required></textarea>
+            </label>
+            <label>Start Date
+                <input type="date" id="startDate" required />
+            </label>
+            <label>End Date
+                <input type="date" id="endDate" required />
+            </label>
+            <div class="actions">
+                <button type="submit">Submit</button>
+                <button type="button" onclick="window.location.href='/'">Cancel</button>
+            </div>
+        </form>
+    </div>
+    <script>
+    document.getElementById('goalForm').onsubmit = function(e) {
+        e.preventDefault();
+        const name = document.getElementById('goalName').value.trim();
+        const desc = document.getElementById('goalDesc').value.trim();
+        const start = document.getElementById('startDate').value;
+        const end = document.getElementById('endDate').value;
+        if (!name || !desc || !start || !end) {
+            alert('All fields are required.');
+            return;
+        }
+        const startDate = new Date(start);
+        const endDate = new Date(end);
+        if (endDate <= startDate) {
+            alert('End date must be after start date.');
+            return;
+        }
+        const diff = (endDate - startDate) / (1000 * 60 * 60 * 24);
+        if (diff > 25) {
+            alert('End date must be no more than 25 days after start date.');
+            return;
+        }
+        if (endDate <= new Date()) {
+            alert('End date must be in the future.');
+            return;
+        }
+        // Save to localStorage
+        let goals = JSON.parse(localStorage.getItem('goals') || '[]');
+        const id = Date.now();
+        goals.push({ id, name, desc, start, end });
+        localStorage.setItem('goals', JSON.stringify(goals));
+        alert('Goal saved!');
+        window.location.href = '/';
+    };
+    </script>
+</body>
+</html>
+{{end}}

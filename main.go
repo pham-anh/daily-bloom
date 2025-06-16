@@ -1,13 +1,16 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
+	"github.com/labstack/echo/v4"
 	"github.com/pham-anh/daily-bloom/controller"
 )
 
 func main() {
-	r := gin.Default()
-	r.LoadHTMLGlob("view/*")
-	r.GET("/", controller.Index)
-	r.Run(":8080")
+	e := echo.New()
+	e.Renderer = controller.NewTemplateRenderer("view/*")
+
+	e.GET("/", controller.Number)
+	e.POST("/", controller.Number)
+	e.GET("/goals/add", controller.GoalsAdd)
+	e.Logger.Fatal(e.Start(":8080"))
 }
