@@ -24,6 +24,18 @@ Input items:
   - Start
   - End: must be a future day which as no more than 25 days from the `start`
 
-It has submit and cancel button. On submitting, save data into browser storage
-
 Internally assign an id for the goals
+
+It has submit and cancel button. On submitting, save data into browser storage.
+
+After saving data, redirect to `GET goals/:id`. The `:id` is the id of the goal.
+
+## UIR: GET goals/:id
+
+Get the goal data from the browser storage and display it in calendar format based on the `start` and `end` date.
+
+The display must show the goal name, description also.
+
+There must be a cell for each day so that users can paint on it as a check for goal completed of the day.
+
+There must be a `Print` button. When users click this button, display print screen or a PDF format.
