@@ -3,11 +3,11 @@ package controller
 import (
 	"net/http"
 
-	"github.com/gin-gonic/gin"
+	"github.com/labstack/echo/v4"
 )
 
-func Index(c *gin.Context) {
-	c.HTML(http.StatusOK, "index.tmpl", gin.H{
+func Index(c echo.Context) error {
+	return c.Render(http.StatusOK, "index.tmpl", map[string]interface{}{
 		"title": "Users",
 	})
 }
