@@ -1,0 +1,80 @@
+{{define "goal_detail"}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Goal Detail</title>
+    <style>
+        body { background: #fff; color: #000; font-family: sans-serif; margin: 0; padding: 0; }
+        .container { max-width: 600px; margin: 2rem auto; padding: 2rem; border: 1px solid #000; border-radius: 8px; }
+        h2, h3 { margin: 0.5rem 0; }
+        .calendar { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 1rem; }
+        .day-cell { width: 40px; height: 40px; border: 1px solid #000; display: flex; align-items: center; justify-content: center; cursor: pointer; user-select: none; background: #fff; }
+        .day-cell.checked { background: #000; color: #fff; }
+        .calendar-label { font-size: 0.8rem; text-align: center; }
+        .actions { margin-top: 1.5rem; }
+        button { padding: 0.5rem 1rem; border: 1px solid #000; border-radius: 4px; background: #fff; color: #000; cursor: pointer; }
+        @media (max-width: 600px) {
+            .container { max-width: 98vw; padding: 1rem; }
+            .day-cell { width: 28px; height: 28px; font-size: 0.8rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2 id="goalName"></h2>
+        <h3 id="goalDesc"></h3>
+        <div class="calendar" id="calendar"></div>
+        <div class="actions">
+            <button onclick="window.print()">Print</button>
+        </div>
+    </div>
+    <script>
+    function getQueryId() {
+        const parts = window.location.pathname.split('/');
+        return parts[parts.length - 1];
+    }
+    function getGoalById(id) {
+        let goals = JSON.parse(localStorage.getItem('goals') || '[]');
+        return goals.find(g => g.id == id);
+    }
+    function daysBetween(start, end) {
+        const s = new Date(start);
+        const e = new Date(end);
+        return Math.round((e - s) / (1000 * 60 * 60 * 24)) + 1;
+    }
+    function renderCalendar(start, end, checkedDays) {
+        const calendar = document.getElementById('calendar');
+        calendar.innerHTML = '';
+        const s = new Date(start);
+        for (let i = 0; i < daysBetween(start, end); i++) {
+            const d = new Date(s.getTime());
+            d.setDate(s.getDate() + i);
+            const dayStr = d.toISOString().slice(0, 10);
+            const cell = document.createElement('div');
+            cell.className = 'day-cell' + (checkedDays[dayStr] ? ' checked' : '');
+            cell.textContent = d.getDate();
+            cell.title = dayStr;
+            cell.onclick = function() {
+                checkedDays[dayStr] = !checkedDays[dayStr];
+                localStorage.setItem('goal-check-' + goal.id, JSON.stringify(checkedDays));
+                cell.classList.toggle('checked');
+            };
+            calendar.appendChild(cell);
+        }
+    }
+    const goalId = getQueryId();
+    const goal = getGoalById(goalId);
+    if (!goal) {
+        document.body.innerHTML = '<div class="container"><h2>Goal not found</h2></div>';
+    } else {
+        document.getElementById('goalName').textContent = goal.name;
+        document.getElementById('goalDesc').textContent = goal.desc;
+        let checkedDays = JSON.parse(localStorage.getItem('goal-check-' + goal.id) || '{}');
+        renderCalendar(goal.start, goal.end, checkedDays);
+    }
+    </script>
+</body>
+</html>
+{{end}}

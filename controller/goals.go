@@ -25,3 +25,7 @@ func (t *TemplateRenderer) Render(w io.Writer, name string, data interface{}, c 
 func GoalsAdd(c echo.Context) error {
 	return c.Render(http.StatusOK, "goals_add", nil)
 }
+
+func GoalDetail(c echo.Context) error {
+	return c.Render(http.StatusOK, "goal_detail", nil)
+}

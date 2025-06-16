@@ -70,8 +70,7 @@
         const id = Date.now();
         goals.push({ id, name, desc, start, end });
         localStorage.setItem('goals', JSON.stringify(goals));
-        alert('Goal saved!');
-        window.location.href = '/';
+        window.location.href = '/goals/' + id;
     };
     </script>
 </body>
